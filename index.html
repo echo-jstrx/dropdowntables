@@ -14,6 +14,17 @@
             cursor: pointer;
             background-color: #f1f1f1;
         }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .product-table th, .product-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .product-table th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -53,8 +64,14 @@
                 row.addEventListener('click', function() {
                     const orderId = this.dataset.orderId;
                     const products = {
-                        1: [{ name: 'Product 1A' }, { name: 'Product 1B' }],
-                        2: [{ name: 'Product 2A' }, { name: 'Product 2B' }]
+                        1: [
+                            { name: 'Product 1A', price: '$10', quantity: 2 },
+                            { name: 'Product 1B', price: '$15', quantity: 1 }
+                        ],
+                        2: [
+                            { name: 'Product 2A', price: '$20', quantity: 3 },
+                            { name: 'Product 2B', price: '$25', quantity: 1 }
+                        ]
                     };
 
                     const existingProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
@@ -62,16 +79,40 @@
                     if (existingProductRows.length > 0) {
                         existingProductRows.forEach(row => row.style.display = row.style.display === 'none' ? 'table-row' : 'none');
                     } else {
+                        const productTable = document.createElement('table');
+                        productTable.classList.add('product-table');
+                        productTable.innerHTML = `
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        `;
+
                         products[orderId].forEach(product => {
                             const productRow = document.createElement('tr');
-                            productRow.classList.add('product-row');
-                            productRow.dataset.orderId = orderId;
-                            productRow.innerHTML = `<td colspan="5">${product.name}</td>`;
-                            this.insertAdjacentElement('afterend', productRow);
+                            productRow.innerHTML = `
+                                <td>${product.name}</td>
+                                <td>${product.price}</td>
+                                <td>${product.quantity}</td>
+                            `;
+                            productTable.querySelector('tbody').appendChild(productRow);
                         });
 
-                        const newProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
-                        newProductRows.forEach(row => row.style.display = 'table-row');
+                        const productContainerRow = document.createElement('tr');
+                        productContainerRow.classList.add('product-row');
+                        productContainerRow.dataset.orderId = orderId;
+                        const productContainerCell = document.createElement('td');
+                        productContainerCell.colSpan = 5;
+                        productContainerCell.appendChild(productTable);
+                        productContainerRow.appendChild(productContainerCell);
+                        this.insertAdjacentElement('afterend', productContainerRow);
+
+                        productContainerRow.style.display = 'table-row';
                     }
                 });
             });
