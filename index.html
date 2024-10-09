@@ -5,35 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Table</title>
     <style>
-        .product-list {
+        .product-row {
+            display: none;
             padding-left: 20px;
+            background-color: #f9f9f9;
+        }
+        .order-row:hover {
+            cursor: pointer;
+            background-color: #f1f1f1;
         }
     </style>
 </head>
 <body>
-    <table id="orderTable">
-        <tr>
-            <td>
-                <details>
-                    <summary>Order 1</summary>
-                    <div class="product-list">
-                        <p>Product 1A</p>
-                        <p>Product 1B</p>
-                    </div>
-                </details>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <details>
-                    <summary>Order 2</summary>
-                    <div class="product-list">
-                        <p>Product 2A</p>
-                        <p>Product 2B</p>
-                    </div>
-                </details>
-            </td>
-        </tr>
+    <table id="orderTable" border="1" cellspacing="0" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Order No.</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="order-row" data-order-id="1">
+                <td>1</td>
+                <td>John</td>
+                <td>Doe</td>
+                <td>john.doe@example.com</td>
+                <td>123 Main St</td>
+            </tr>
+            <tr class="order-row" data-order-id="2">
+                <td>2</td>
+                <td>Jane</td>
+                <td>Smith</td>
+                <td>jane.smith@example.com</td>
+                <td>456 Elm St</td>
+            </tr>
+        </tbody>
     </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderRows = document.querySelectorAll('.order-row');
+
+            orderRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const orderId = this.dataset.orderId;
+                    const products = {
+                        1: [{ name: 'Product 1A' }, { name: 'Product 1B' }],
+                        2: [{ name: 'Product 2A' }, { name: 'Product 2B' }]
+                    };
+
+                    const existingProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
+                    existingProductRows.forEach(row => row.remove());
+
+                    products[orderId].forEach(product => {
+                        const productRow = document.createElement('tr');
+                        productRow.classList.add('product-row');
+                        productRow.dataset.orderId = orderId;
+                        productRow.innerHTML = `<td colspan="5">${product.name}</td>`;
+                        this.insertAdjacentElement('afterend', productRow);
+                    });
+
+                    const newProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
+                    newProductRows.forEach(row => row.style.display = 'table-row');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
