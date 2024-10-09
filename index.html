@@ -58,18 +58,21 @@
                     };
 
                     const existingProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
-                    existingProductRows.forEach(row => row.remove());
+                    
+                    if (existingProductRows.length > 0) {
+                        existingProductRows.forEach(row => row.style.display = row.style.display === 'none' ? 'table-row' : 'none');
+                    } else {
+                        products[orderId].forEach(product => {
+                            const productRow = document.createElement('tr');
+                            productRow.classList.add('product-row');
+                            productRow.dataset.orderId = orderId;
+                            productRow.innerHTML = `<td colspan="5">${product.name}</td>`;
+                            this.insertAdjacentElement('afterend', productRow);
+                        });
 
-                    products[orderId].forEach(product => {
-                        const productRow = document.createElement('tr');
-                        productRow.classList.add('product-row');
-                        productRow.dataset.orderId = orderId;
-                        productRow.innerHTML = `<td colspan="5">${product.name}</td>`;
-                        this.insertAdjacentElement('afterend', productRow);
-                    });
-
-                    const newProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
-                    newProductRows.forEach(row => row.style.display = 'table-row');
+                        const newProductRows = document.querySelectorAll(`.product-row[data-order-id="${orderId}"]`);
+                        newProductRows.forEach(row => row.style.display = 'table-row');
+                    }
                 });
             });
         });
